@@ -14,7 +14,6 @@ export class CustomerController{
   @ApiResponse({status: 403, description: "Forbidden."})
   @ApiResponse({status: 201, description: "Customer created successfully"})
   async create(@Body() data: CreateCustomerDTO){
-    await this.createCustomerUseCase.execute(data);
-    return {message: "Customer created successfully"}
+    return await this.createCustomerUseCase.execute(data);
   }
 }

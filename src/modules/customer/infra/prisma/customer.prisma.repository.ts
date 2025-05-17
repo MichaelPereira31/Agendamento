@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { Customer } from "src/modules/customer/domain/entities/customer.entity";
 import { CustomerRepository } from "src/modules/customer/domain/repositories/customer.repository";
 import { PrismaService } from "src/shared/infra/prisma/prisma.service"
+import { CreateCustomerDTO } from "../../domain/application/customer/dtos/create-customer.dto";
 
 @Injectable()
 export class PrismaCustomerRepository implements CustomerRepository {
@@ -12,6 +13,19 @@ export class PrismaCustomerRepository implements CustomerRepository {
 
     return customers
   }
+
+  async findByEmail(email: string): Promise<Customer | null> {
+    const customer = await this.prisma.customers.findUnique({
+      where: { email },
+    });
+
+    if (!customer) {
+      return null;
+    }
+
+    return customer;
+  }
+  
   async findById(id: string): Promise<Customer> {
     const customer = await this.prisma.customers.findUnique({
       where: { id },
@@ -25,8 +39,8 @@ export class PrismaCustomerRepository implements CustomerRepository {
 
   }
 
-  async create(customer: Customer): Promise<void> {
-    await this.prisma.customers.create({
+  async create(customer: CreateCustomerDTO): Promise<Customer> {
+    return await this.prisma.customers.create({
       data: {
         name: customer.name,
         email: customer.email,
@@ -36,15 +50,17 @@ export class PrismaCustomerRepository implements CustomerRepository {
 
   }
 
-  async update(id: string, customer: Partial<Customer>): Promise<void> {
+  async update(id: string, customer: Partial<CreateCustomerDTO>): Promise<Customer> {
     const { email, name, phone } = customer;
 
-    await this.prisma.customers.update({
+    const customerUpdated = await this.prisma.customers.update({
       where: { id },
       data: {
         email, name, phone
       }
     });
+
+    return customerUpdated;
   }
 
   async delete(id: string): Promise<void> {

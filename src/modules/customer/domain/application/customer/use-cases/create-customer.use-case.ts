@@ -1,7 +1,7 @@
 import { CustomerRepository } from "src/modules/customer/domain/repositories/customer.repository";
 import { CreateCustomerDTO } from "../dtos/create-customer.dto";
 import { Customer } from "../../../entities/customer.entity";
-import { Inject } from "@nestjs/common";
+import { ConflictException, Inject } from "@nestjs/common";
 
 export class CreateCustomerUseCase {
   constructor(
@@ -9,9 +9,17 @@ export class CreateCustomerUseCase {
     private readonly customerRepository: CustomerRepository,
   ) {}
 
-  async execute(data: CreateCustomerDTO): Promise<void> {
-    const customer = Customer.create(data);
+  async execute(data: CreateCustomerDTO): Promise<Customer> {
 
-    await this.customerRepository.create(customer);
+    const customerAlreadyExists = await this.customerRepository.findByEmail(data.email);
+    
+    if (customerAlreadyExists) {
+      throw new ConflictException('Customer already exists');
+    }
+
+    const customer =  await this.customerRepository.create(data);
+
+    return customer;
+  
   }
 }
