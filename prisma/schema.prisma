@@ -1,0 +1,79 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  CANCELED
+}
+
+enum NotificationsChannel {
+  EMAIL
+  WHATSAPP
+}
+
+enum NotificationsStatus {
+  SENT
+  FAILED
+}
+
+model Customers {
+  id           String         @id @default(uuid())
+  name         String
+  email        String         @unique
+  phone        String
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+  Appointments Appointments[]
+
+  @@map("customers")
+}
+
+model Appointments {
+  id           String            @id @default(uuid())
+  date_time    DateTime
+  status       AppointmentStatus
+  customer     Customers         @relation(fields: [customerId], references: [id])
+  customerId   String            @map("customer_id")
+  service      Services          @relation(fields: [serviceId], references: [id])
+  serviceId    String            @map("service_id")
+  notification Notifications?
+
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  notificationsId String?
+
+  @@map("appointments")
+}
+
+model Services {
+  id              String         @id @default(uuid())
+  name            String
+  description     String
+  durationMinutes Int            @map("duration_minutes")
+  price           Float
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
+  Appointments    Appointments[]
+
+  @@map("services")
+}
+
+model Notifications {
+  id            String               @id @default(uuid())
+  channel       NotificationsChannel
+  status        NotificationsStatus
+  sentAt        DateTime?
+  createdAt     DateTime             @default(now()) @map("created_at")
+  updatedAt     DateTime             @updatedAt @map("updated_at")
+  appointment   Appointments         @relation(fields: [appointmentId], references: [id])
+  appointmentId String               @unique @map("appointment_id")
+
+  @@map("notifications")
+}
