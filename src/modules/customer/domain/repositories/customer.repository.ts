@@ -1,4 +1,4 @@
-import { CreateCustomerDTO } from "../application/customer/dtos/create-customer.dto";
+import { CreateCustomerDTO } from "../application/dtos/create-customer.dto";
 import { Customer } from "../entities/customer.entity";
 
 export abstract class CustomerRepository {

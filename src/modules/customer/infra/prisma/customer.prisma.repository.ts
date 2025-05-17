@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { Customer } from "src/modules/customer/domain/entities/customer.entity";
 import { CustomerRepository } from "src/modules/customer/domain/repositories/customer.repository";
 import { PrismaService } from "src/shared/infra/prisma/prisma.service"
-import { CreateCustomerDTO } from "../../domain/application/customer/dtos/create-customer.dto";
+import { CreateCustomerDTO } from "../../domain/application/dtos/create-customer.dto";
 
 @Injectable()
 export class PrismaCustomerRepository implements CustomerRepository {
@@ -19,24 +19,15 @@ export class PrismaCustomerRepository implements CustomerRepository {
       where: { email },
     });
 
-    if (!customer) {
-      return null;
-    }
-
     return customer;
   }
-  
-  async findById(id: string): Promise<Customer> {
+
+  async findById(id: string): Promise<Customer | null> {
     const customer = await this.prisma.customers.findUnique({
       where: { id },
     });
 
-    if (!customer) {
-      throw new Error('Customer not found');
-    }
-
     return customer;
-
   }
 
   async create(customer: CreateCustomerDTO): Promise<Customer> {
