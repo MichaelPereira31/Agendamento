@@ -11,7 +11,7 @@ export class FindByIdCustomerController {
   @ApiOperation({ summary: "Find a customer by id" })
   @ApiResponse({ status: 403, description: "Forbidden." })
   @ApiResponse({ status: 200, description: "Customer found successfully" })
-  async create(@Param('id') id: string) {
+  async findById(@Param('id') id: string) {
     return await this.findByIdCustomerUseCase.execute(id);
   }
 }
