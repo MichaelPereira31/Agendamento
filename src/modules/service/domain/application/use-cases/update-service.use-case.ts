@@ -1,7 +1,7 @@
 import { Inject, NotFoundException } from "@nestjs/common";
 import { ServiceRepository } from "../../repositories/service.repository";
-import { CreateServiceDTO } from "../dtos/create-service.dto";
 import { Service } from "../../entities/service.entity";
+import { UpdateServiceDTO } from "../dtos/update-service.dto";
 
 export class UpdateServiceUseCase {
   constructor(
@@ -9,7 +9,7 @@ export class UpdateServiceUseCase {
     private readonly serviceRepository: ServiceRepository,
   ) {}
 
-  async execute(id: string, data: Partial<CreateServiceDTO>): Promise<Service> {
+  async execute(id: string, data: UpdateServiceDTO): Promise<Service> {
     const service = await this.serviceRepository.findById(id);
     
     if (!service) {
