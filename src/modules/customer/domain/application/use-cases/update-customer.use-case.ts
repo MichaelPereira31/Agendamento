@@ -2,6 +2,7 @@ import { Inject, NotFoundException } from "@nestjs/common";
 import { CustomerRepository } from "../../repositories/customer.repository";
 import { CreateCustomerDTO } from "../dtos/create-customer.dto";
 import { Customer } from "../../entities/customer.entity";
+import { UpdateCustomerDTO } from "../dtos/update-customer.dto";
 
 export class UpdateCustomerUseCase{
   constructor(
@@ -9,7 +10,7 @@ export class UpdateCustomerUseCase{
     private readonly customerRepository: CustomerRepository,
   ){}
 
-  async execute(id: string, data: Partial<CreateCustomerDTO>): Promise<Customer> {
+  async execute(id: string, data: UpdateCustomerDTO): Promise<Customer> {
     const customer = await this.customerRepository.findById(id);
 
     if (!customer) {
